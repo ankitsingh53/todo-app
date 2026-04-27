@@ -4,13 +4,6 @@ const todolist = document.getElementById("todolist");
 
 let editTodo = null;
 
-const now = new Date();
-console.log(now);
-
-const time = now.toLocaleTimeString();
-
-console.log(time);
-
 // --------Add to do----------
 
 const addTodo = () => {
@@ -22,7 +15,7 @@ const addTodo = () => {
     editTodo.target.previousElementSibling.innerHTML = inputText;
     addbtn.value = "Add";
     inputBox.value = "";
-    console.log(editTodo.target)
+    console.log(editTodo.target);
   } else {
     const li = document.createElement("li");
     const para = document.createElement("p");
@@ -39,12 +32,17 @@ const addTodo = () => {
 
     // adding time
 
+    const now = new Date();
+    const time = now.toLocaleTimeString();
+
     const span = document.createElement("span");
     span.innerHTML = `  ${time}`;
     li.appendChild(span);
 
     todolist.appendChild(li);
     inputBox.value = "";
+
+    saveLocalTodos(inputText);
   }
 };
 
@@ -64,5 +62,55 @@ const updateTodo = (e) => {
   }
 };
 
+const saveLocalTodos = (todo) => {
+  let todos;
+  if (localStorage.getItem("todos") === null) {
+    todos = [];
+  } else {
+    todos = JSON.parse(localStorage.getItem("todos"));
+  }
+  todos.push(todo);
+  localStorage.setItem("todos", JSON.stringify(todos));
+};
+
+const getLocalTodos = () => {
+  let todos;
+  if (localStorage.getItem("todos") === null) {
+    todos = [];
+  } else {
+    todos = JSON.parse(localStorage.getItem("todos"));
+
+    todos.forEach((todo) => {
+
+      const li = document.createElement("li");
+      const para = document.createElement("p");
+      para.innerText = todo ;
+      li.appendChild(para);
+
+      const editBtn = document.createElement("button");
+      editBtn.innerText = "Edit";
+      li.appendChild(editBtn);
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.innerText = "Remove";
+      li.appendChild(deleteBtn);
+
+      // adding time
+
+      const now = new Date();
+      const time = now.toLocaleTimeString();
+
+      const span = document.createElement("span");
+      span.innerHTML = `  ${time}`;
+      li.appendChild(span);
+
+      todolist.appendChild(li);
+
+    });
+}
+};
+
+
+document.addEventListener('DOMContentLoaded', getLocalTodos)
 addbtn.addEventListener("click", addTodo);
 todolist.addEventListener("click", updateTodo);
